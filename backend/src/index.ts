@@ -118,6 +118,11 @@ const initializeApp = async () => {
   }
 };
 
+app.get('/', (req, res) => {
+  res.send('Welcome to the Leaderboard API');
+
+});
+
 const PORT = process.env.PORT || 3000;
 
 if (process.env.NODE_ENV !== 'production') {
@@ -128,9 +133,5 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-app.get('/', (req, res) => {
-  res.send('Welcome to the Leaderboard API');\
-  
-});
 
 export default app;
