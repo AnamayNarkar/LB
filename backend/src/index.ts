@@ -28,10 +28,7 @@ global.io = io;
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   const allowedOrigins = [
-    process.env.FRONTEND_URL || "http://localhost:5173",
-    "http://localhost:3000",
-    "https://localhost:5173",
-    "https://localhost:3000"
+    process.env.FRONTEND_URL || "http://localhost:5173"
   ];
   
   if (origin && allowedOrigins.includes(origin)) {
@@ -54,9 +51,6 @@ app.use(cors({
   origin: function (origin, callback) {
     const allowedOrigins = [
       process.env.FRONTEND_URL || "http://localhost:5173",
-      "http://localhost:3000",
-      "https://localhost:5173",
-      "https://localhost:3000"
     ];
     
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
@@ -93,6 +87,7 @@ io.on('connection', (socket) => {
 // Function to emit leaderboard updates
 export const emitLeaderboardUpdate = async () => {
   try {
+    connectDB();
     const users = await User.find().sort({ totalPoints: -1 });
     global.io.emit('leaderboard-update', users);
   } catch (error) {
@@ -100,38 +95,14 @@ export const emitLeaderboardUpdate = async () => {
   }
 };
 
-// Initialize database and seed data
-const initializeApp = async () => {
-  await connectDB();
-  
-  // Seed initial users if database is empty
-  const userCount = await User.countDocuments();
-  if (userCount === 0) {
-    const initialUsers = ['Rahul', 'Kamal', 'Sanak', 'Priya', 'Amit', 'Neha', 'Ravi', 'Pooja', 'Karan', 'Meera'];
-    
-    for (const name of initialUsers) {
-      const user = new User({ name });
-      await user.save();
-    }
-    
-    console.log('✅ Initial users seeded successfully');
-  }
-};
-
 app.get('/', (req, res) => {
   res.send('Welcome to the Leaderboard API');
-
 });
 
 const PORT = process.env.PORT || 3000;
 
-if (process.env.NODE_ENV !== 'production') {
-  initializeApp().then(() => {
-    server.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-    });
-  });
-}
-
+server.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
 
 export default app;

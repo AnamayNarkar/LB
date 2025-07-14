@@ -2,9 +2,11 @@ import { Request, Response } from 'express';
 import { User } from '../models';
 import { calculateRankings, generateRandomPoints } from '../utils/helpers';
 import { emitLeaderboardUpdate } from '../index';
+import connectDB from '../utils/database';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
+        connectDB();
     const { name } = req.body;
 
     if (!name) {
@@ -28,6 +30,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 
 export const getUsers = async (_req: Request, res: Response): Promise<void> => {
   try {
+        connectDB();
     const users = await User.find().sort({ totalPoints: -1 });
     res.json(users);
   } catch (error: any) {
@@ -37,6 +40,7 @@ export const getUsers = async (_req: Request, res: Response): Promise<void> => {
 
 export const claimPoints = async (req: Request, res: Response): Promise<void> => {
   try {
+        connectDB();
     const { userId } = req.body;
 
     if (!userId) {
