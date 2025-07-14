@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { User, PointHistory, ClaimPointsResponse } from '../types';
+import type { User, ClaimPointsResponse } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -9,7 +9,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
-  withCredentials: true, // Include credentials for CORS requests
+  withCredentials: true,
 });
 
 export const apiService = {
@@ -30,13 +30,6 @@ export const apiService = {
   // Claim points for a user
   claimPoints: async (userId: string): Promise<ClaimPointsResponse> => {
     const response = await api.post('/api/users/claim', { userId });
-    return response.data;
-  },
-
-  // Get point history
-  getPointHistory: async (userId?: string): Promise<PointHistory[]> => {
-    const url = userId ? `/api/users/history/${userId}` : '/api/users/history';
-    const response = await api.get(url);
     return response.data;
   },
 };

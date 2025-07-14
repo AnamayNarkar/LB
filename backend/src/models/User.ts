@@ -12,19 +12,20 @@ const userSchema = new Schema<IUser>({
   name: {
     type: String,
     required: true,
-    unique: true,
-    trim: true
+    trim: true,
   },
   totalPoints: {
     type: Number,
-    default: 0
+    default: 0,
   },
   rank: {
     type: Number,
-    default: 0
+    default: 0,
   }
 }, {
   timestamps: true
 });
 
-export default mongoose.model<IUser>('User', userSchema);
+const User = mongoose.model<IUser>('User', userSchema);
+
+export default User;

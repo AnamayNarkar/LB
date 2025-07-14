@@ -1,10 +1,9 @@
-import type { Socket } from 'socket.io-client';
-import type { User } from '../types'
-import { io } from 'socket.io-client';
+import { Socket, io } from 'socket.io-client';
+import type { User } from '../types';
 
 
 class SocketService {
-  private socket: typeof Socket | null = null;
+  private socket: Socket | null = null;
   private url: string;
 
   constructor() {

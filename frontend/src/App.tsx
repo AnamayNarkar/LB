@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
-import type { User, PointHistory } from './types';
+import type { User } from './types';
 import apiService from './services/api';
 import socketService from './services/socket';
 import UserSelection from './components/UserSelection';
 import Leaderboard from './components/Leaderboard';
 import AddUserModal from './components/AddUserModal';
-import PointHistoryModal from './components/PointHistoryModal';
 import './App.css';
 
 function App() {
@@ -14,8 +13,6 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [lastAward, setLastAward] = useState<{ points: number; user: string } | null>(null);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
-  const [showHistoryModal, setShowHistoryModal] = useState(false);
-  const [pointHistory, setPointHistory] = useState<PointHistory[]>([]);
 
   // Fetch users on component mount
   useEffect(() => {
@@ -70,7 +67,7 @@ function App() {
 
   const handleAddUser = async (name: string) => {
     try {
-      const newUser = await apiService.createUser(name);
+      await apiService.createUser(name);
       await fetchUsers(); // Refresh the user list
       setShowAddUserModal(false);
     } catch (error) {
@@ -79,33 +76,25 @@ function App() {
     }
   };
 
-  const handleShowHistory = async () => {
-    try {
-      const history = await apiService.getPointHistory();
-      setPointHistory(history);
-      setShowHistoryModal(true);
-    } catch (error) {
-      console.error('Error fetching point history:', error);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 text-white">
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-white">
-            🏆 Leaderboard
+        {/* Header with Glass Effect */}
+        <div className="text-center mb-12 p-8 backdrop-blur-lg bg-white/10 rounded-2xl shadow-xl">
+          <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+            🏆 Game Leaderboard
           </h1>
-          <p className="text-gray-400">
-            Select a user and claim random points to climb the rankings!
+          <p className="text-lg text-blue-200">
+            Compete, climb the ranks, and claim your spot at the top!
           </p>
         </div>
 
         {/* Last Award Notification */}
         {lastAward && (
-          <div className="mb-6 p-4 bg-green-600 rounded-lg text-center animate-pulse">
-            <p className="text-lg font-semibold">
-              🎉 {lastAward.user} earned {lastAward.points} points!
+          <div className="fixed top-4 right-4 p-4 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg shadow-lg transform transition-all duration-500 ease-out animate-slide-in z-50">
+            <p className="text-lg font-semibold flex items-center">
+              <span className="text-2xl mr-2">🎉</span>
+              {lastAward.user} earned {lastAward.points} points!
             </p>
           </div>
         )}
@@ -121,41 +110,31 @@ function App() {
               loading={loading}
             />
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={() => setShowAddUserModal(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-              >
-                ➕ Add New User
-              </button>
-              <button
-                onClick={handleShowHistory}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-              >
-                📊 View History
-              </button>
-            </div>
+            {/* Action Button */}
+            <button
+              onClick={() => setShowAddUserModal(true)}
+              className="w-full py-4 px-6 bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
+            >
+              <span className="text-2xl mr-2">➕</span>
+              Add New Player
+            </button>
           </div>
 
           {/* Right Column - Leaderboard */}
-          <div>
-            <Leaderboard users={users} />
+          <div className="relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl opacity-75 blur"></div>
+            <div className="relative">
+              <Leaderboard users={users} />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Modals */}
+      {/* Modal */}
       <AddUserModal
         isOpen={showAddUserModal}
         onClose={() => setShowAddUserModal(false)}
         onAddUser={handleAddUser}
-      />
-
-      <PointHistoryModal
-        isOpen={showHistoryModal}
-        onClose={() => setShowHistoryModal(false)}
-        history={pointHistory}
       />
     </div>
   );
