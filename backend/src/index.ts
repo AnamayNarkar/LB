@@ -129,7 +129,8 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.get('/', (req, res) => {
-  res.send('Welcome to the Leaderboard API');
+  res.send('Welcome to the Leaderboard API');\
+  
 });
 
 export default app;
